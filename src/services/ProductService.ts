@@ -1,25 +1,18 @@
 import { HttpService } from "./HttpService";
 import { Product } from "../types/Product";
+import { ProductFactory } from "../models/ProductFactory";
 
-export class ProductService {
-  private http: HttpService;
+class ProductService {
+    private http = new HttpService("https://fakestoreapi.com");
 
-  constructor(baseUrl = "https://fakestoreapi.com") {
-    this.http = new HttpService(baseUrl);
-  }
+    async getAllProducts(): Promise<Product[]> {
+        const products = await this.http.get<Product[]>("/products");
+        return products;
+    }
 
-  async getAllProducts(): Promise<Product[]> {
-    return this.http.get<Product[]>("/products");
-  }
-
-  async getProductById(id: number): Promise<Product> {
-    return this.http.getById<Product>("/products", id);
-  }
-
-  async getProductsByCategory(category: string): Promise<Product[]> {
-    const encoded = encodeURIComponent(category);
-    return this.http.get<Product[]>(`/products/category/${encoded}`);
-  }
+    async getProductById(id: number): Promise<Product> {
+        return await this.http.get<Product>(`/products/${id}`);
+    }
 }
 
 export const productService = new ProductService();
